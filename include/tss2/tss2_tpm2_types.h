@@ -15,8 +15,8 @@
 
 #include <stdint.h>
 
-#define TPM2_MAX_COMMAND_SIZE  4096 /* maximum size of a command */
-#define TPM2_MAX_RESPONSE_SIZE 4096 /* maximum size of a response */
+#define TPM2_MAX_COMMAND_SIZE  8192  //4096 /* maximum size of a command */
+#define TPM2_MAX_RESPONSE_SIZE 8192  //4096 /* maximum size of a response */
 
 /* TPM constants for buffer sizes */
 #define TPM2_NUM_PCR_BANKS      16
@@ -26,7 +26,7 @@
 #define TPM2_MAX_ALG_LIST_SIZE  128
 #define TPM2_MAX_CAP_CC         256
 #define TPM2_MAX_CAP_BUFFER     1024
-#define TPM2_MAX_CONTEXT_SIZE   5120
+#define TPM2_MAX_CONTEXT_SIZE   12288 // 8192 // 7856 // 5120
 
 /* Hash algorithm sizes */
 #define TPM2_SHA_DIGEST_SIZE     20
@@ -42,6 +42,12 @@
 #define TPM2_MAX_ECC_KEY_BYTES  128
 #define TPM2_MAX_SYM_KEY_BYTES  32
 #define TPM2_MAX_RSA_KEY_BYTES  512
+#define TPM2_SPHINCS_PUBLIC_KEY_BITS 64
+#define TPM2_SPHINCS_SECRET_KEY_BITS 128
+#define TPM2_SPHINCS_SIGNATURE_BITS  49856
+#define TPM2_MLDSA_PUBLIC_KEY_BYTES 2592     /* ML-DSA-87 parameters size */
+#define TPM2_MLDSA_SECRET_KEY_BYTES 4896
+#define TPM2_MLDSA_SIGNATURE_BYTES  4627
 
 /* Capability buffer sizes*/
 #define TPM2_LABEL_MAX_BUFFER 32
@@ -114,8 +120,10 @@ typedef UINT16 TPM2_ALG_ID;
 #define TPM2_ALG_CBC                 ((TPM2_ALG_ID) 0x0042)
 #define TPM2_ALG_CFB                 ((TPM2_ALG_ID) 0x0043)
 #define TPM2_ALG_ECB                 ((TPM2_ALG_ID) 0x0044)
+#define TPM2_ALG_SPHINCS_SHAKE_256F  ((TPM2_ALG_ID) 0x0045)
+#define TPM2_ALG_MLDSA_87            ((TPM2_ALG_ID) 0x0046)
 #define TPM2_ALG_FIRST               ((TPM2_ALG_ID) 0x0001)
-#define TPM2_ALG_LAST                ((TPM2_ALG_ID) 0x0044)
+#define TPM2_ALG_LAST                ((TPM2_ALG_ID) 0x0046)
 
 /* From TCG Algorithm Registry: Definition of TPM2_ECC_CURVE Constants */
 typedef UINT16                TPM2_ECC_CURVE;
@@ -1510,6 +1518,8 @@ struct TPMT_KEYEDHASH_SCHEME {
 typedef TPMS_SCHEME_HASH TPMS_SIG_SCHEME_RSASSA;
 typedef TPMS_SCHEME_HASH TPMS_SIG_SCHEME_RSAPSS;
 
+typedef TPMS_SCHEME_HASH TPMS_SIG_SCHEME_MLDSA;
+
 /* Definition of ECC Types for ECC Signature Schemes */
 typedef TPMS_SCHEME_HASH  TPMS_SIG_SCHEME_ECDSA;     /* all asymmetric signing schemes */
 typedef TPMS_SCHEME_HASH  TPMS_SIG_SCHEME_SM2;       /* all asymmetric signing schemes */
@@ -1582,6 +1592,7 @@ union TPMU_ASYM_SCHEME {
     TPMS_SIG_SCHEME_ECDAA ecdaa;         /* signing and anonymous signing */
     TPMS_SIG_SCHEME_SM2 sm2;             /* signing and anonymous signing */
     TPMS_SIG_SCHEME_ECSCHNORR ecschnorr; /* signing and anonymous signing */
+    TPMS_SIG_SCHEME_MLDSA mldsa;
     TPMS_ENC_SCHEME_RSAES rsaes;         /* schemes with no hash */
     TPMS_ENC_SCHEME_OAEP oaep;           /* schemes with no hash */
     TPMS_SCHEME_HASH anySig;
@@ -1593,6 +1604,14 @@ typedef struct TPMT_ASYM_SCHEME TPMT_ASYM_SCHEME;
 struct TPMT_ASYM_SCHEME {
     TPMI_ALG_ASYM_SCHEME scheme; /* scheme selector */
     TPMU_ASYM_SCHEME details;    /* scheme parameters */
+};
+
+typedef TPM2_ALG_ID TPMI_ALG_MLDSA_SCHEME;
+
+typedef struct TPMT_MLDSA_SCHEME TPMT_MLDSA_SCHEME;
+struct TPMT_MLDSA_SCHEME {
+    TPMI_ALG_MLDSA_SCHEME scheme; /* scheme selector */
+    TPMU_ASYM_SCHEME details;   /* scheme parameters */
 };
 
 /* Definition of TPM2_ALG_ID RSA TPMI_ALG_RSA_SCHEME Type */
@@ -1622,6 +1641,34 @@ struct TPM2B_PUBLIC_KEY_RSA {
     BYTE buffer[TPM2_MAX_RSA_KEY_BYTES];
 };
 
+/* Definition of SPHINCS TPM2B_PUBLIC_KEY_SPHINCS Structure */
+typedef struct TPM2B_PUBLIC_KEY_SPHINCS TPM2B_PUBLIC_KEY_SPHINCS;
+struct TPM2B_PUBLIC_KEY_SPHINCS {
+    UINT16 size;
+    BYTE buffer[TPM2_SPHINCS_PUBLIC_KEY_BITS];
+};
+
+/* Definition of ML-DSA TPM2B_PUBLIC_KEY_MLDSA Structure */
+typedef struct TPM2B_PUBLIC_KEY_MLDSA TPM2B_PUBLIC_KEY_MLDSA;
+struct TPM2B_PUBLIC_KEY_MLDSA {
+    UINT16 size;
+    BYTE buffer[TPM2_MLDSA_PUBLIC_KEY_BYTES];
+};
+
+/* Definition of SPHINCS TPM2B_SIGNATURE_SPHINCS Structure */
+typedef struct TPM2B_SIGNATURE_SPHINCS TPM2B_SIGNATURE_SPHINCS;
+struct TPM2B_SIGNATURE_SPHINCS {
+    UINT16 size;
+    BYTE buffer[TPM2_SPHINCS_SIGNATURE_BITS];
+};
+
+/* Definition of MLDSA TPM2B_SIGNATURE_MLDSA Structure */
+typedef struct TPM2B_SIGNATURE_MLDSA TPM2B_SIGNATURE_MLDSA;
+struct TPM2B_SIGNATURE_MLDSA {
+    UINT16 size;
+    BYTE buffer[TPM2_MLDSA_SIGNATURE_BYTES];
+};
+
 /* Definition of RSA TPM2_KEY_BITS TPMI_RSA_KEY_BITS Type */
 typedef TPM2_KEY_BITS TPMI_RSA_KEY_BITS;
 
@@ -1630,6 +1677,20 @@ typedef struct TPM2B_PRIVATE_KEY_RSA TPM2B_PRIVATE_KEY_RSA;
 struct TPM2B_PRIVATE_KEY_RSA {
     UINT16 size;
     BYTE buffer[TPM2_MAX_RSA_KEY_BYTES/2 * 5];
+};
+
+/* Definition of SPHINCS TPM2B_PRIVATE_KEY_RSA */
+typedef struct TPM2B_PRIVATE_KEY_SPHINCS TPM2B_PRIVATE_KEY_SPHINCS;
+struct TPM2B_PRIVATE_KEY_SPHINCS {
+    UINT16 size;
+    BYTE buffer[TPM2_SPHINCS_SECRET_KEY_BITS];
+};
+
+/* Definition of MLDSA TPM2B_PRIVATE_KEY_MLDSA */
+typedef struct TPM2B_PRIVATE_KEY_MLDSA TPM2B_PRIVATE_KEY_MLDSA;
+struct TPM2B_PRIVATE_KEY_MLDSA {
+    UINT16 size;
+    BYTE buffer[TPM2_MLDSA_SECRET_KEY_BYTES];
 };
 
 /* Definition of ECC TPM2B_ECC_PARAMETER Structure */
@@ -1689,6 +1750,20 @@ struct TPMS_SIGNATURE_RSA {
     TPM2B_PUBLIC_KEY_RSA sig; /* The signature is the size of a public key. */
 };
 
+/* Definition of SPHINCS TPMS_SIGNATURE_SPHINCS Structure*/
+typedef struct TPMS_SIGNATURE_SPHINCS TPMS_SIGNATURE_SPHINCS;
+struct TPMS_SIGNATURE_SPHINCS {
+	TPMI_ALG_HASH hash;
+	TPM2B_SIGNATURE_SPHINCS sig;
+};
+
+/* Definition of ML-DSA TPMS_SIGNATURE_MLDSA Structure*/
+typedef struct TPMS_SIGNATURE_MLDSA TPMS_SIGNATURE_MLDSA;
+struct TPMS_SIGNATURE_MLDSA {
+	TPMI_ALG_HASH hash;
+	TPM2B_SIGNATURE_MLDSA sig;
+};
+
 /* Definition of Types for RSA Signature */
 typedef TPMS_SIGNATURE_RSA TPMS_SIGNATURE_RSASSA;
 typedef TPMS_SIGNATURE_RSA TPMS_SIGNATURE_RSAPSS;
@@ -1716,6 +1791,8 @@ union TPMU_SIGNATURE {
     TPMS_SIGNATURE_ECDAA ecdaa;         /* all asymmetric signatures */
     TPMS_SIGNATURE_SM2 sm2;             /* all asymmetric signatures */
     TPMS_SIGNATURE_ECSCHNORR ecschnorr; /* all asymmetric signatures */
+    TPMS_SIGNATURE_SPHINCS sphincs;
+    TPMS_SIGNATURE_MLDSA mldsa;
     TPMT_HA hmac;                       /* HMAC signature required to be supported */
     TPMS_SCHEME_HASH any;               /* used to access the hash */
     TPMS_EMPTY null;                    /* TPM2_ALG_NULL */
@@ -1754,6 +1831,8 @@ union TPMU_PUBLIC_ID {
     TPM2B_DIGEST sym;
     TPM2B_PUBLIC_KEY_RSA rsa;
     TPMS_ECC_POINT ecc;
+    TPM2B_PUBLIC_KEY_SPHINCS sphincs;
+    TPM2B_PUBLIC_KEY_MLDSA mldsa;
     TPMS_DERIVE derive;
 };
 
@@ -1768,6 +1847,11 @@ typedef struct TPMS_ASYM_PARMS TPMS_ASYM_PARMS;
 struct TPMS_ASYM_PARMS {
     TPMT_SYM_DEF_OBJECT symmetric; /* the companion symmetric algorithm for a restricted decryption key and shall be set to a supported symmetric algorithm. This field is optional for keys that are not decryption keys and shall be set to TPM2_ALG_NULL if not used. */
     TPMT_ASYM_SCHEME scheme; /* For a key with the sign attribute SET a valid signing scheme for the key type. For a key with the decrypt attribute SET a valid key exchange protocol. For a key with sign and decrypt attributes shall be TPM2_ALG_NULL */
+};
+
+typedef struct TPMS_MLDSA_PARMS TPMS_MLDSA_PARMS;
+struct TPMS_MLDSA_PARMS {
+    TPMT_MLDSA_SCHEME scheme;
 };
 
 /* Definition of RSA TPMS_RSA_PARMS Structure */
@@ -1796,6 +1880,7 @@ union TPMU_PUBLIC_PARMS {
     TPMS_RSA_PARMS rsaDetail;             /* decrypt + sign2 */
     TPMS_ECC_PARMS eccDetail;             /* decrypt + sign2 */
     TPMS_ASYM_PARMS asymDetail;           /* common scheme structure for RSA and ECC keys */
+    TPMS_MLDSA_PARMS mldsaDetail;
 };
 
 /* Definition of TPMT_PUBLIC_PARMS Structure */
@@ -1842,6 +1927,8 @@ typedef union TPMU_SENSITIVE_COMPOSITE TPMU_SENSITIVE_COMPOSITE;
 union TPMU_SENSITIVE_COMPOSITE {
     TPM2B_PRIVATE_KEY_RSA rsa;         /* a prime factor of the public key */
     TPM2B_ECC_PARAMETER ecc;           /* the integer private key */
+    TPM2B_PRIVATE_KEY_SPHINCS sphincs; /* the sphincs private key*/
+    TPM2B_PRIVATE_KEY_MLDSA mldsa; /* the mldsa private key*/
     TPM2B_SENSITIVE_DATA bits;         /* the private data */
     TPM2B_SYM_KEY sym;                 /* the symmetric key */
     TPM2B_PRIVATE_VENDOR_SPECIFIC any; /* vendor-specific size for key storage */

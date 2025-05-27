@@ -1140,6 +1140,22 @@ TPMS_UNMARSHAL_2(TPMS_SIGNATURE_RSA,
                  hash, Tss2_MU_UINT16_Unmarshal,
                  sig, Tss2_MU_TPM2B_PUBLIC_KEY_RSA_Unmarshal)
 
+TPMS_MARSHAL_2(TPMS_SIGNATURE_SPHINCS,
+		hash, VAL, Tss2_MU_UINT16_Marshal,
+		sig, ADDR, Tss2_MU_TPM2B_SIGNATURE_SPHINCS_Marshal)
+
+TPMS_UNMARSHAL_2(TPMS_SIGNATURE_SPHINCS,
+		hash, Tss2_MU_UINT16_Unmarshal,
+		sig, Tss2_MU_TPM2B_SIGNATURE_SPHINCS_Unmarshal)
+        
+TPMS_MARSHAL_2(TPMS_SIGNATURE_MLDSA,
+        hash, VAL, Tss2_MU_UINT16_Marshal,
+        sig, ADDR, Tss2_MU_TPM2B_SIGNATURE_MLDSA_Marshal)
+    
+TPMS_UNMARSHAL_2(TPMS_SIGNATURE_MLDSA,
+        hash, Tss2_MU_UINT16_Unmarshal,
+        sig, Tss2_MU_TPM2B_SIGNATURE_MLDSA_Unmarshal)  
+
 TPMS_MARSHAL_3(TPMS_SIGNATURE_ECC,
                hash, VAL, Tss2_MU_UINT16_Marshal,
                signatureR, ADDR, Tss2_MU_TPM2B_ECC_PARAMETER_Marshal,
@@ -1287,6 +1303,12 @@ TPMS_MARSHAL_1(TPMS_KEYEDHASH_PARMS,
 
 TPMS_UNMARSHAL_1(TPMS_KEYEDHASH_PARMS,
                  scheme, Tss2_MU_TPMT_KEYEDHASH_SCHEME_Unmarshal)
+            
+TPMS_MARSHAL_1(TPMS_MLDSA_PARMS,
+               scheme, ADDR, Tss2_MU_TPMT_MLDSA_SCHEME_Marshal)
+
+TPMS_UNMARSHAL_1(TPMS_MLDSA_PARMS,
+                 scheme, Tss2_MU_TPMT_MLDSA_SCHEME_Unmarshal)
 
 TPMS_MARSHAL_4(TPMS_RSA_PARMS,
                symmetric, ADDR, Tss2_MU_TPMT_SYM_DEF_OBJECT_Marshal,
@@ -1305,6 +1327,14 @@ TPMS_MARSHAL_1(TPMS_SYMCIPHER_PARMS,
 
 TPMS_UNMARSHAL_1(TPMS_SYMCIPHER_PARMS,
                  sym, Tss2_MU_TPMT_SYM_DEF_OBJECT_Unmarshal)
+
+/* TPMS_MARSHAL_2(TPMS_ASYM_PARMS,
+                symmetric, ADDR, Tss2_MU_TPMT_SYM_DEF_OBJECT_Marshal,
+                scheme, ADDR, Tss2_MU_TPMT_ASYM_SCHEME_Marshal)
+     
+TPMS_UNMARSHAL_2(TPMS_ASYM_PARMS,
+                symmetric, Tss2_MU_TPMT_SYM_DEF_OBJECT_Unmarshal,
+                scheme, Tss2_MU_TPMT_ASYM_SCHEME_Unmarshal) */
 
 TPMS_MARSHAL_0(TPMS_EMPTY);
 

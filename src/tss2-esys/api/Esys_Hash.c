@@ -327,6 +327,7 @@ Esys_Hash_Finish(
     r = Tss2_Sys_Hash_Complete(esysContext->sys,
                                (outHash != NULL) ? *outHash : NULL,
                                (validation != NULL) ? *validation : NULL);
+    printf("Esys_Hash(330): validation->tag: %04x\n", (*validation)->tag);
     goto_state_if_error(r, _ESYS_STATE_INTERNALERROR,
                         "Received error from SAPI unmarshaling" ,
                         error_cleanup);

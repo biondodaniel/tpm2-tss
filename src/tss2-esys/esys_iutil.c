@@ -544,6 +544,10 @@ iesys_compute_encrypted_salt(ESYS_CONTEXT * esys_context,
         return_if_error(r, "During KDFe computation.");
         esys_context->salt.size = keyHash_size;
         break;
+    case TPM2_ALG_SPHINCS_SHAKE_256F:
+    	break;
+    case TPM2_ALG_MLDSA_87:
+    	break;
     default:
         LOG_ERROR("Not implemented");
         return TSS2_ESYS_RC_GENERAL_FAILURE;

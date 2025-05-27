@@ -540,6 +540,12 @@ TPMT_MARSHAL_2(TPMT_ASYM_SCHEME, scheme, VAL, Tss2_MU_UINT16_Marshal,
 TPMT_UNMARSHAL_2(TPMT_ASYM_SCHEME, scheme, Tss2_MU_UINT16_Unmarshal,
                  details, scheme, Tss2_MU_TPMU_ASYM_SCHEME_Unmarshal)
 
+TPMT_MARSHAL_2(TPMT_MLDSA_SCHEME, scheme, VAL, Tss2_MU_UINT16_Marshal,
+               details, ADDR, scheme, Tss2_MU_TPMU_ASYM_SCHEME_Marshal)
+
+TPMT_UNMARSHAL_2(TPMT_MLDSA_SCHEME, scheme, Tss2_MU_UINT16_Unmarshal,
+                 details, scheme, Tss2_MU_TPMU_ASYM_SCHEME_Unmarshal)
+
 TPMT_MARSHAL_2(TPMT_RSA_SCHEME, scheme, VAL, Tss2_MU_UINT16_Marshal,
                details, ADDR, scheme, Tss2_MU_TPMU_ASYM_SCHEME_Marshal)
 

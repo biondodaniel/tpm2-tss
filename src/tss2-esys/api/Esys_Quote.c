@@ -18,6 +18,7 @@
 #define LOGMODULE esys
 #include "util/log.h"
 #include "util/aux_util.h"
+#include <time.h>
 
 /** One-Call function for TPM2_Quote
  *

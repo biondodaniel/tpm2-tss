@@ -18,6 +18,7 @@
 #define LOGMODULE esys
 #include "util/log.h"
 #include "util/aux_util.h"
+#include <time.h>
 
 /** Store command parameters inside the ESYS_CONTEXT for use during _Finish */
 static void store_input_parameters (

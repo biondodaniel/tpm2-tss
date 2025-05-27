@@ -18,6 +18,7 @@
 #define LOGMODULE esys
 #include "util/log.h"
 #include "util/aux_util.h"
+#include <time.h>
 
 /** One-Call function for TPM2_Sign
  *
@@ -183,6 +184,7 @@ Esys_Sign_Async(
                               (keyHandleNode == NULL) ? TPM2_RH_NULL
                                : keyHandleNode->rsrc.handle, digest, inScheme,
                               validation);
+    printf("Tss2_Sys_Sign_Prepare(188): validation->tag: %04x\n", validation->tag);                         
     return_state_if_error(r, _ESYS_STATE_INIT, "SAPI Prepare returned error.");
 
     /* Calculate the cpHash Values */

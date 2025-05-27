@@ -18,6 +18,7 @@
 #define LOGMODULE esys
 #include "util/log.h"
 #include "util/aux_util.h"
+#include <time.h>
 
 /** Store sensitive data inside the ESYS_CONTEXT */
 static void store_input_parameters (
